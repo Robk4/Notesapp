@@ -28,7 +28,9 @@ class HomePage extends StatelessWidget {
    //Main program builder
   @override
   Widget build(BuildContext context) {
-    return Scaffold( //Structure of the page
+    return MaterialApp(
+    debugShowCheckedModeBanner: false,
+    home: Scaffold( //Structure of the page
       appBar: AppBar(title:  const Text("Home page"),
       backgroundColor:const Color.fromARGB(255, 60, 255, 0),),
       backgroundColor: const Color(0xFFDCCCBB),
@@ -39,22 +41,44 @@ class HomePage extends StatelessWidget {
           //Switch that on done proceeds and on everything else(default:) pump out Loading..
           switch (snapshot.connectionState){
             case ConnectionState.done:
-            final user = FirebaseAuth.instance.currentUser;
-            if(user?.emailVerified ?? false)
-            {
-              print("You are a verified user");
-            }
-            else
-            {
-              print("You need to verify your email first");
-            }
-            return const Text("Done");
+            // final user = FirebaseAuth.instance.currentUser;
+            // if(user?.emailVerified ?? false)
+            // {
+            //   print("You are a verified user");
+            //   return const Text("Done");
+            // }
+            // else
+            // {
+            //   return const VerifyEmailView();
+            // }
+            return const LoginView();
          default:
-         return const Text("Loading..");
+          return const Text("Loading..");
           }     
         },
       ),
-    );
+    )
+  );
   }
 }
+class VerifyEmailView extends StatefulWidget {
+  const VerifyEmailView({super.key});
 
+  @override
+  State<VerifyEmailView> createState() => _VerifyEmailViewState();
+}
+
+class _VerifyEmailViewState extends State<VerifyEmailView> {
+  @override
+  Widget build(BuildContext context) {
+    return Column(children:[
+        const Text("Please verify your emial address: "),
+        TextButton(onPressed: ()async{
+          final user = FirebaseAuth.instance.currentUser;
+          await user?.sendEmailVerification();
+        }, 
+                   child: const Text("Send email verification"),
+        )
+      ]);
+  }
+}

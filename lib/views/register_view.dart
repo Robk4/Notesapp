@@ -36,17 +36,17 @@ class _RegisterViewState extends State<RegisterView> {
   //Main program builder
   @override
   Widget build(BuildContext context) {
-    return Scaffold( //Structure of the page
-      appBar: AppBar(title:  const Text("This is where u register?"),
-      backgroundColor:const Color.fromARGB(255, 66, 123, 228),),
-      backgroundColor: const Color(0xFFDCCCBB),
-      body: FutureBuilder( // FutureBuilder makes sure column isnt built before future is finished
-        future: Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform),
-        builder: (context, snapshot) 
-        {
-          //Switch that on done proceeds and on everything else(default:) pump out Loading..
-          switch (snapshot.connectionState){
-            case ConnectionState.done:
+    // return Scaffold( //Structure of the page
+    //   appBar: AppBar(title:  const Text("This is where u register?"),
+    //   backgroundColor:const Color.fromARGB(255, 66, 123, 228),),
+    //   backgroundColor: const Color(0xFFDCCCBB),
+    //   body: FutureBuilder( // FutureBuilder makes sure column isnt built before future is finished
+    //     future: Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform),
+    //     builder: (context, snapshot) 
+    //     {
+    //       //Switch that on done proceeds and on everything else(default:) pump out Loading..
+    //       switch (snapshot.connectionState){
+    //         case ConnectionState.done:
             return Column(
           children: [
             TextField(
@@ -83,11 +83,11 @@ class _RegisterViewState extends State<RegisterView> {
             child: const Text("Register")),
           ],
          );
-         default:
-         return const Text("Loading..");
-          }     
-        },
-      ),
-    );
+  //        default:
+  //        return const Text("Loading..");
+  //         }     
+  //       },
+  //     ),
+  //   );
   }
 }
