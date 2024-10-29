@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:notesapp/firebase_options.dart';
 import 'package:notesapp/views/login_view.dart';
 import 'package:notesapp/views/register_view.dart';
+import 'package:notesapp/views/verify_email_view.dart';
 
 void main() 
 {
@@ -18,6 +19,10 @@ void main()
       ),
       
       home: const HomePage(),
+      routes: {
+        '/login/': (context) => const LoginView(),
+        '/register/': (context) => const RegisterView(),
+      },
   )
   );
 }
@@ -28,13 +33,13 @@ class HomePage extends StatelessWidget {
    //Main program builder
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: Scaffold( //Structure of the page
-      appBar: AppBar(title:  const Text("Home page"),
-      backgroundColor:const Color.fromARGB(255, 60, 255, 0),),
-      backgroundColor: const Color(0xFFDCCCBB),
-      body: FutureBuilder( // FutureBuilder makes sure column isnt built before future is finished
+    return 
+      // Scaffold( //Structure of the page
+      // appBar: AppBar(title:  const Text("Home page"),
+      // backgroundColor:const Color.fromARGB(255, 66, 123, 228),),
+      // backgroundColor: const Color(0xFFDCCCBB),
+      // body:
+       FutureBuilder( // FutureBuilder makes sure column isnt built before future is finished
         future: Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform),
         builder: (context, snapshot) 
         {
@@ -53,32 +58,10 @@ class HomePage extends StatelessWidget {
             // }
             return const LoginView();
          default:
-          return const Text("Loading..");
+          return const CircularProgressIndicator();
           }     
         },
-      ),
-    )
-  );
-  }
-}
-class VerifyEmailView extends StatefulWidget {
-  const VerifyEmailView({super.key});
-
-  @override
-  State<VerifyEmailView> createState() => _VerifyEmailViewState();
-}
-
-class _VerifyEmailViewState extends State<VerifyEmailView> {
-  @override
-  Widget build(BuildContext context) {
-    return Column(children:[
-        const Text("Please verify your emial address: "),
-        TextButton(onPressed: ()async{
-          final user = FirebaseAuth.instance.currentUser;
-          await user?.sendEmailVerification();
-        }, 
-                   child: const Text("Send email verification"),
-        )
-      ]);
+      );
+    // );
   }
 }

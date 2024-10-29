@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
+//import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:notesapp/firebase_options.dart';
+//import 'package:notesapp/firebase_options.dart';
 
 class LoginView extends StatefulWidget { //Stateful because we need to manage things inside
   const LoginView({super.key});
@@ -36,10 +36,10 @@ class _LoginViewState extends State<LoginView> {
   //Main program builder
   @override
   Widget build(BuildContext context) {
-    // return Scaffold( //Structure of the page
-    //   appBar: AppBar(title:  const Text("Already registered? Login then!"),
-    //   backgroundColor:const Color.fromARGB(255, 66, 123, 228),),
-    //   backgroundColor: const Color(0xFFDCCCBB),
+     return Scaffold( //Structure of the page
+       appBar: AppBar(title:  const Text("Already registered? Login then!"),
+       backgroundColor:const Color.fromARGB(255, 66, 123, 228),),
+       backgroundColor: const Color(0xFFDCCCBB),
     //   body: FutureBuilder( // FutureBuilder makes sure column isnt built before future is finished
     //     future: Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform),
     //     builder: (context, snapshot) 
@@ -47,7 +47,7 @@ class _LoginViewState extends State<LoginView> {
     //       //Switch that on done proceeds and on everything else(default:) pump out Loading..
     //       switch (snapshot.connectionState){
     //         case ConnectionState.done:
-            return Column(
+            body: Column(
           children: [
             TextField(
               //The basics of making a email field
@@ -87,9 +87,19 @@ class _LoginViewState extends State<LoginView> {
                 }
               }
             }, 
-            child: const Text("Login")),
+            child: const Text("Login")
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                  '/register/', 
+                  (route) => false,
+                );
+              }, 
+              child: const Text("Not registered yet? Register here!"))
           ],
-         );
+         )
+     );
 //          default:
 //          return const Text("Loading..");
 //           }     
