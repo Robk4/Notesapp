@@ -46,17 +46,20 @@ class HomePage extends StatelessWidget {
           //Switch that on done proceeds and on everything else(default:) pump out Loading..
           switch (snapshot.connectionState){
             case ConnectionState.done:
-            // final user = FirebaseAuth.instance.currentUser;
-            // if(user?.emailVerified ?? false)
-            // {
-            //   print("You are a verified user");
-            //   return const Text("Done");
-            // }
-            // else
-            // {
-            //   return const VerifyEmailView();
-            // }
-            return const LoginView();
+             final user = FirebaseAuth.instance.currentUser;
+             if(user!= null){
+              if(user.emailVerified)
+              {
+                print("Email is verified");
+              }
+              else{
+                return const VerifyEmailView();
+              }
+             }
+             else{
+              return const LoginView();
+             }
+             return const Text("Done");
          default:
           return const CircularProgressIndicator();
           }     
