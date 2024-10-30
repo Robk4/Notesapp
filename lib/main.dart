@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:notesapp/constants/routes.dart';
 import 'package:notesapp/firebase_options.dart';
 import 'package:notesapp/views/login_view.dart';
 import 'package:notesapp/views/register_view.dart';
@@ -18,9 +19,10 @@ void main() {
     ),
     home: const HomePage(),
     routes: {
-      '/login/': (context) => const LoginView(),
-      '/register/': (context) => const RegisterView(),
-      '/notes/': (context) => const NotesView(),
+      loginRoute: (context) => const LoginView(),
+      registerRoute: (context) => const RegisterView(),
+      notesRoute: (context) => const NotesView(),
+      verifyEmailRoute: (context) => const VerifyEmailView(),
     },
   ));
 }
@@ -46,11 +48,11 @@ class HomePage extends StatelessWidget {
         switch (snapshot.connectionState) {
           case ConnectionState.done:
             final user = FirebaseAuth.instance.currentUser;
-            if (user != null) {
-              if (user.emailVerified) {
-                return const NotesView();
+            if (user != null) { // Checking for users existence
+              if (user.emailVerified) { // Checking for users email verification
+                return const NotesView(); 
               } else {
-                return const VerifyEmailView();
+                return const VerifyEmailView(); 
               }
             } else {
               return const LoginView();
@@ -63,7 +65,7 @@ class HomePage extends StatelessWidget {
     // );
   }
 }
-
+// Menu action button
 enum MenuAction { logout }
 
 class NotesView extends StatefulWidget {
@@ -90,7 +92,7 @@ class _NotesViewState extends State<NotesView> {
                     {
                       await FirebaseAuth.instance.signOut();
                       Navigator.of(context).pushNamedAndRemoveUntil(
-                        '/login/',
+                        loginRoute,
                         (_) => false,
                         );
                     }
@@ -111,6 +113,7 @@ class _NotesViewState extends State<NotesView> {
   }
 }
 
+// Method for log out dialog
 Future<bool> showLogOutDialog(BuildContext context) {
   return showDialog<bool>(
       context: context,

@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 //import 'package:notesapp/firebase_options.dart';
 import 'dart:developer' as dartlog;
+import 'package:notesapp/constants/routes.dart';
+import 'package:notesapp/utilities/show_error_dialog.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -76,20 +78,28 @@ class _RegisterViewState extends State<RegisterView> {
                 try {
                   //await so it doesnt begin as soon as the page is loaded
                   //Creating the user for the FireBase backend based on inputs
-                  final userCredential = await FirebaseAuth.instance
+                   await FirebaseAuth.instance
                       .createUserWithEmailAndPassword(
                           email: email, password: password);
-                  dartlog.log(userCredential.toString());
+                  final user = FirebaseAuth.instance.currentUser;
+                  user?.sendEmailVerification(); //Sending a verification email as a user registers
+                  Navigator.of(context).pushNamed(verifyEmailRoute);
                 } on FirebaseAuthException catch (e) {
-                  dartlog.log(e.code);
+                  await showErrorDialog(context, "An unexpected error occurred${e.code}");
                   //TODO Invalid email,email in use, weak password exceptions
+                }
+                catch(e)
+                {
+                  await showErrorDialog(
+                    context, e.toString(),
+                  );
                 }
               },
               child: const Text("Register")),
           TextButton(
               onPressed: () {
                 Navigator.of(context).pushNamedAndRemoveUntil(
-                  '/login/',
+                  loginRoute,
                   (route) => false,
                 );
               },
