@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 //import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 //import 'package:notesapp/firebase_options.dart';
+import 'dart:developer' as dartlog;
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -9,9 +10,8 @@ class RegisterView extends StatefulWidget {
   @override
   State<RegisterView> createState() => _RegisterViewState();
 }
- 
-class _RegisterViewState extends State<RegisterView> {
 
+class _RegisterViewState extends State<RegisterView> {
 //Creation of the variables for controller
 //We need controller to act as a proxy
   late final TextEditingController _email;
@@ -36,66 +36,72 @@ class _RegisterViewState extends State<RegisterView> {
   //Main program builder
   @override
   Widget build(BuildContext context) {
-     return Scaffold( //Structure of the page
-      appBar: AppBar(title:  const Text("This is where u register?"),
-      backgroundColor:const Color.fromARGB(255, 66, 123, 228),),
+    return Scaffold(
+      //Structure of the page
+      appBar: AppBar(
+        title: const Text("This is where u register?"),
+        backgroundColor: const Color.fromARGB(255, 66, 123, 228),
+      ),
       backgroundColor: const Color(0xFFDCCCBB),
-    //   body: FutureBuilder( // FutureBuilder makes sure column isnt built before future is finished
-    //     future: Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform),
-    //     builder: (context, snapshot) 
-    //     {
-    //       //Switch that on done proceeds and on everything else(default:) pump out Loading..
-    //       switch (snapshot.connectionState){
-    //         case ConnectionState.done:
-              body: Column(
-                        children: [
-              TextField(
-                //The basics of making a email field
-                controller: _email,
-                keyboardType: TextInputType.emailAddress,
-                autocorrect: false, 
-                decoration: const InputDecoration(hintText:"Enter your email here" ),
-                ),
-              TextField(
-                controller: _password,
-                decoration: const InputDecoration(hintText:"Enter your password here" ),
-                //The basics of making a password field
-                obscureText: true,
-                enableSuggestions: false,
-                autocorrect: false,
-                ),
-              TextButton(onPressed: () async{
+      //   body: FutureBuilder( // FutureBuilder makes sure column isnt built before future is finished
+      //     future: Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform),
+      //     builder: (context, snapshot)
+      //     {
+      //       //Switch that on done proceeds and on everything else(default:) pump out Loading..
+      //       switch (snapshot.connectionState){
+      //         case ConnectionState.done:
+      body: Column(
+        children: [
+          TextField(
+            //The basics of making a email field
+            controller: _email,
+            keyboardType: TextInputType.emailAddress,
+            autocorrect: false,
+            decoration:
+                const InputDecoration(hintText: "Enter your email here"),
+          ),
+          TextField(
+            controller: _password,
+            decoration:
+                const InputDecoration(hintText: "Enter your password here"),
+            //The basics of making a password field
+            obscureText: true,
+            enableSuggestions: false,
+            autocorrect: false,
+          ),
+          TextButton(
+              onPressed: () async {
                 final email = _email.text;
                 final password = _password.text;
-                try
-                {
+                try {
                   //await so it doesnt begin as soon as the page is loaded
                   //Creating the user for the FireBase backend based on inputs
-                  final userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password); 
-                  print (userCredential);
-                }
-                on FirebaseAuthException catch(e)
-                {
-                  print(e.code);
+                  final userCredential = await FirebaseAuth.instance
+                      .createUserWithEmailAndPassword(
+                          email: email, password: password);
+                  dartlog.log(userCredential.toString());
+                } on FirebaseAuthException catch (e) {
+                  dartlog.log(e.code);
                   //TODO Invalid email,email in use, weak password exceptions
                 }
-              }, 
-              child: const Text("Register")
-              ),
-              TextButton(onPressed: (){
+              },
+              child: const Text("Register")),
+          TextButton(
+              onPressed: () {
                 Navigator.of(context).pushNamedAndRemoveUntil(
                   '/login/',
                   (route) => false,
                 );
-              }, child: const Text("Already registered? Login here!"))
-              ],
-            ),
-          );
-  //        default:
-  //        return const Text("Loading..");
-  //         }     
-  //       },
-  //     ),
-  //   );
+              },
+              child: const Text("Already registered? Login here!"))
+        ],
+      ),
+    );
+    //        default:
+    //        return const Text("Loading..");
+    //         }
+    //       },
+    //     ),
+    //   );
   }
 }
