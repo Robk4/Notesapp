@@ -1,9 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
-//import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-//import 'package:notesapp/firebase_options.dart';
 import 'dart:developer' as dartlog;
-import 'package:notesapp/constants/routes.dart'; 
+import 'package:notesapp/constants/routes.dart';
+import 'package:notesapp/services/auth/auth_exceptions.dart';
+import 'package:notesapp/services/auth/auth_service.dart';
 import 'package:notesapp/utilities/show_error_dialog.dart';
 
 class LoginView extends StatefulWidget {
@@ -79,42 +78,30 @@ class _LoginViewState extends State<LoginView> {
                     final password = _password.text;
                     //await so it doesnt begin as soon as the page is loaded
                     //Signing in to the user for in the FireBase backend based on inputs
-                    final userCredential = FirebaseAuth.instance.currentUser;
-                    await FirebaseAuth.instance
-                        .signInWithEmailAndPassword(
-                            email: email, password: password);
+                    final userCredential = AuthService.firebase().currentUser;
+                    await AuthService.firebase()
+                        .logIn(email: email, password: password);
                     //Checks if the user is verified
-                    if(userCredential?.emailVerified ?? false){
-                        Navigator.of(context)
-                        .pushNamedAndRemoveUntil(notesRoute, (route) => false);
+                    if (userCredential?.isEmailVerified ?? false) {
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                          notesRoute, (route) => false);
                     } else {
-                        Navigator.of(context)
-                        .pushNamedAndRemoveUntil(verifyEmailRoute, (route) => false);
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                          verifyEmailRoute, (route) => false);
                     }
                     dartlog.log(userCredential.toString());
-                    
+
                     Navigator.of(context)
                         .pushNamedAndRemoveUntil(notesRoute, (route) => false);
-                        
-                        //Catching the ERRORS HERE
-                  } on FirebaseAuthException catch (e) {
-                    dartlog.log(e.code);
-                    if (e.code == 'invalid-credential') {
-                      await showErrorDialog(
-                        context, 
-                        'User Not Found',
-                        );
-                    } else {
-                      await showErrorDialog(
-                        context, 
-                        'An unexpected error occurred ${e.code}',
-                        );
-                    }
-                  }catch (e){
-                        await showErrorDialog(
-                        context, 
-                        e.toString(),
-                        );
+
+                    //Catching the ERRORS HERE
+                  } on InvalidCredentialsdAuthException {
+                    await showErrorDialog(
+                      context,
+                      'User Not Found',
+                    );
+                  } on GenericAuthException {
+                    await showErrorDialog(context, 'Authentication error');
                   }
                 },
                 child: const Text("Login")),
@@ -127,7 +114,6 @@ class _LoginViewState extends State<LoginView> {
                 },
                 child: const Text("Not registered yet? Register here!"))
           ],
-        )
-      );
+        ));
   }
 }

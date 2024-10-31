@@ -1,9 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
-//import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-//import 'package:notesapp/firebase_options.dart';
 import 'dart:developer' as dartlog;
 import 'package:notesapp/constants/routes.dart';
+import 'package:notesapp/services/auth/auth_exceptions.dart';
+import 'package:notesapp/services/auth/auth_service.dart';
 import 'package:notesapp/utilities/show_error_dialog.dart';
 
 class RegisterView extends StatefulWidget {
@@ -78,21 +77,17 @@ class _RegisterViewState extends State<RegisterView> {
                 try {
                   //await so it doesnt begin as soon as the page is loaded
                   //Creating the user for the FireBase backend based on inputs
-                   await FirebaseAuth.instance
-                      .createUserWithEmailAndPassword(
-                          email: email, password: password);
-                  final user = FirebaseAuth.instance.currentUser;
-                  user?.sendEmailVerification(); //Sending a verification email as a user registers
-                  Navigator.of(context).pushNamed(verifyEmailRoute);
-                } on FirebaseAuthException catch (e) {
-                  await showErrorDialog(context, "An unexpected error occurred${e.code}");
-                  //TODO Invalid email,email in use, weak password exceptions
-                }
-                catch(e)
-                {
-                  await showErrorDialog(
-                    context, e.toString(),
+                  await AuthService.firebase().createUser(
+                    email: email,
+                    password: password,
                   );
+                  //Sending a verification email as a user registers and send it to verification screen
+                  await AuthService.firebase().sendEmailVerification();
+                  Navigator.of(context).pushNamed(verifyEmailRoute);
+                  //TODO Invalid email,email in use, weak password exceptions
+                } on GenericAuthException {
+                  await showErrorDialog(
+                      context, "An unexpected error occurred");
                 }
               },
               child: const Text("Register")),
@@ -107,11 +102,5 @@ class _RegisterViewState extends State<RegisterView> {
         ],
       ),
     );
-    //        default:
-    //        return const Text("Loading..");
-    //         }
-    //       },
-    //     ),
-    //   );
   }
 }
