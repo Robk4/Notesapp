@@ -11,7 +11,7 @@ void main() {
   WidgetsFlutterBinding
       .ensureInitialized(); // Enabling widget binding before initialize
   runApp(MaterialApp(
-    title: 'Flutter Demo',
+    title: 'NotesAPP',
     theme: ThemeData(
       colorScheme: ColorScheme.fromSeed(seedColor: Colors.red),
       useMaterial3: true,
