@@ -32,13 +32,7 @@ class HomePage extends StatelessWidget {
   //Main program builder
   @override
   Widget build(BuildContext context) {
-    return
-        // Scaffold( //Structure of the page
-        // appBar: AppBar(title:  const Text("Home page"),
-        // backgroundColor:const Color.fromARGB(255, 66, 123, 228),),
-        // backgroundColor: const Color(0xFFDCCCBB),
-        // body:
-        FutureBuilder(
+    return FutureBuilder(
       // FutureBuilder makes sure column isnt built before future is finished
       future: AuthService.firebase().initialize(),
       builder: (context, snapshot) {
