@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'dart:developer' as dartlog;
+//import 'dart:developer' as dartlog;
 import 'package:notesapp/constants/routes.dart';
 import 'package:notesapp/services/auth/auth_exceptions.dart';
 import 'package:notesapp/services/auth/auth_service.dart';

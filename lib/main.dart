@@ -6,7 +6,7 @@ import 'package:notesapp/views/notes/create_update_note_view.dart';
 import 'package:notesapp/views/notes/notes_view.dart';
 import 'package:notesapp/views/register_view.dart';
 import 'package:notesapp/views/verify_email_view.dart';
-import 'dart:developer' as dartlog;
+//import 'dart:developer' as dartlog;
 
 void main() {
   WidgetsFlutterBinding
