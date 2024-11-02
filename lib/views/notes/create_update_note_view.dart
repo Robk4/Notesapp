@@ -96,6 +96,9 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        actions: [
+          IconButton(onPressed: () {}, icon: const Icon(Icons.share)),
+        ],
         title: const Text("Adding a new note.."),
       ),
       body: FutureBuilder(
