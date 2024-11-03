@@ -64,6 +64,7 @@ class _NotesViewState extends State<NotesView> {
               },
             )
           ]),
+      backgroundColor: const Color(0xFFDCCCBB),
       body: StreamBuilder(
         stream: _notesService.allNotes(ownerUserId: userId),
         builder: (context, snapshot) {

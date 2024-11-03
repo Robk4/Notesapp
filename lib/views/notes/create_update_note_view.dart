@@ -98,6 +98,7 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: const Color.fromARGB(255, 66, 123, 228),
         actions: [
           IconButton(
               onPressed: () async {
@@ -112,6 +113,7 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
         ],
         title: const Text("Adding a new note.."),
       ),
+      backgroundColor: const Color(0xFFDCCCBB),
       body: FutureBuilder(
         future: createOrGetExistingNote(context),
         builder: (context, snapshot) {

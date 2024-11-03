@@ -19,6 +19,7 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
       appBar: AppBar(
         title: const Text("Email verification happens here"),
       ),
+      backgroundColor: const Color(0xFFDCCCBB),
       body: Column(children: [
         const Text(
             "We've sent you an email verification. Please open your email to verify the account."),
