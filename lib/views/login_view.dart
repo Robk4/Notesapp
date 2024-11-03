@@ -3,11 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 //import 'dart:developer' as dartlog;
 import 'package:notesapp/constants/routes.dart';
 import 'package:notesapp/services/auth/auth_exceptions.dart';
-//import 'package:notesapp/services/auth/auth_service.dart';
 import 'package:notesapp/services/auth/bloc/auth_bloc.dart';
 import 'package:notesapp/services/auth/bloc/auth_event.dart';
 import 'package:notesapp/services/auth/bloc/auth_state.dart';
 import 'package:notesapp/utilities/dialogs/error_dialog.dart';
+import 'package:notesapp/utilities/dialogs/loading_dialog.dart';
 
 class LoginView extends StatefulWidget {
   //Stateful because we need to manage things inside
@@ -22,6 +22,7 @@ class _LoginViewState extends State<LoginView> {
 //We need controller to act as a proxy
   late final TextEditingController _email;
   late final TextEditingController _password;
+  CloseDialog? _closeDialogHandle;
 
 //Creating the state for the variables in HP
   @override
@@ -42,20 +43,35 @@ class _LoginViewState extends State<LoginView> {
   //Main program builder
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return BlocListener<AuthBloc, AuthState>(
+      //Catching the ERRORS HERE
+      listener: (context, state) async {
+        if (state is AuthStateLogout) {
+          final closeDialog = _closeDialogHandle;
+          if (!state.isLoading && closeDialog != null) {
+            closeDialog();
+            _closeDialogHandle = null;
+          } else if (state.isLoading && closeDialog != null) {
+            _closeDialogHandle = showLoadingDialog(
+              context: context,
+              text: 'Loading..?',
+            );
+          }
+
+          if (state.exception is InvalidCredentialsdAuthException) {
+            await showErrorDialog(context, 'User Not Found');
+          } else if (state.exception is GenericAuthException) {
+            await showErrorDialog(context, 'Authentication error');
+          }
+        }
+      },
+      child: Scaffold(
         //Structure of the page
         appBar: AppBar(
           title: const Text("Already registered? Login then!"),
           backgroundColor: const Color.fromARGB(255, 66, 123, 228),
         ),
         backgroundColor: const Color(0xFFDCCCBB),
-        //   body: FutureBuilder( // FutureBuilder makes sure column isnt built before future is finished
-        //     future: Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform),
-        //     builder: (context, snapshot)
-        //     {
-        //       //Switch that on done proceeds and on everything else(default:) pump out Loading..
-        //       switch (snapshot.connectionState){
-        //         case ConnectionState.done:
         body: Column(
           children: [
             TextField(
@@ -75,39 +91,26 @@ class _LoginViewState extends State<LoginView> {
               enableSuggestions: false,
               autocorrect: false,
             ),
-            BlocListener<AuthBloc, AuthState>(
-              //Catching the ERRORS HERE
-              listener: (context, state) async {
-                if (state is AuthStateLogout) {
-                  if (state.exception is InvalidCredentialsdAuthException) {
-                    await showErrorDialog(context, 'User Not Found');
-                  } else if (state.exception is GenericAuthException) {
-                    await showErrorDialog(context, 'Authentication error');
-                  }
-                }
-              },
-              child: TextButton(
-                  onPressed: () async {
-                    final email = _email.text;
-                    final password = _password.text;
-                    context.read<AuthBloc>().add(
-                          AuthEventLogin(
-                            email,
-                            password,
-                          ),
-                        );
-                  },
-                  child: const Text("Login")),
-            ),
+            TextButton(
+                onPressed: () async {
+                  final email = _email.text;
+                  final password = _password.text;
+                  context.read<AuthBloc>().add(
+                        AuthEventLogin(
+                          email,
+                          password,
+                        ),
+                      );
+                },
+                child: const Text("Login")),
             TextButton(
                 onPressed: () {
-                  Navigator.of(context).pushNamedAndRemoveUntil(
-                    registerRoute,
-                    (route) => false,
-                  );
+                  context.read<AuthBloc>().add(const AuthEventShouldRegister());
                 },
                 child: const Text("Not registered yet? Register here!"))
           ],
-        ));
+        ),
+      ),
+    );
   }
 }
