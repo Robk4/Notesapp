@@ -22,7 +22,6 @@ class _LoginViewState extends State<LoginView> {
 //We need controller to act as a proxy
   late final TextEditingController _email;
   late final TextEditingController _password;
-  CloseDialog? _closeDialogHandle;
 
 //Creating the state for the variables in HP
   @override
@@ -47,17 +46,6 @@ class _LoginViewState extends State<LoginView> {
       //Catching the ERRORS HERE
       listener: (context, state) async {
         if (state is AuthStateLogout) {
-          final closeDialog = _closeDialogHandle;
-          if (!state.isLoading && closeDialog != null) {
-            closeDialog();
-            _closeDialogHandle = null;
-          } else if (state.isLoading && closeDialog != null) {
-            _closeDialogHandle = showLoadingDialog(
-              context: context,
-              text: 'Loading..?',
-            );
-          }
-
           if (state.exception is InvalidCredentialsdAuthException) {
             await showErrorDialog(context, 'User Not Found');
           } else if (state.exception is GenericAuthException) {
