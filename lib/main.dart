@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notesapp/constants/routes.dart';
-import 'package:notesapp/services/auth/auth_service.dart';
+import 'package:notesapp/services/auth/bloc/auth_bloc.dart';
+import 'package:notesapp/services/auth/bloc/auth_event.dart';
+import 'package:notesapp/services/auth/bloc/auth_state.dart';
+import 'package:notesapp/services/auth/firebase_auth_provider.dart';
 import 'package:notesapp/views/login_view.dart';
 import 'package:notesapp/views/notes/create_update_note_view.dart';
 import 'package:notesapp/views/notes/notes_view.dart';
@@ -17,7 +21,10 @@ void main() {
       colorScheme: ColorScheme.fromSeed(seedColor: Colors.red),
       useMaterial3: true,
     ),
-    home: const HomePage(),
+    home: BlocProvider<AuthBloc>(
+      create: (context) => AuthBloc(FirebaseAuthProvider()),
+      child: const HomePage(),
+    ),
     routes: {
       loginRoute: (context) => const LoginView(),
       registerRoute: (context) => const RegisterView(),
@@ -34,27 +41,18 @@ class HomePage extends StatelessWidget {
   //Main program builder
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      // FutureBuilder makes sure column isnt built before future is finished
-      future: AuthService.firebase().initialize(),
-      builder: (context, snapshot) {
-        //Switch that on done proceeds and on everything else(default:) pump out Loading..
-        switch (snapshot.connectionState) {
-          case ConnectionState.done:
-            final user = AuthService.firebase().currentUser;
-            if (user != null) {
-              // Checking for users existence
-              if (user.isEmailVerified) {
-                // Checking for users email verification
-                return const NotesView();
-              } else {
-                return const VerifyEmailView();
-              }
-            } else {
-              return const LoginView();
-            }
-          default:
-            return const CircularProgressIndicator();
+    context.read<AuthBloc>().add(const AuthEventInitialize());
+
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, state) {
+        if (state is AuthStateLogin) {
+          return const NotesView();
+        } else if (state is AuthStateNeedsVerification) {
+          return const VerifyEmailView();
+        } else if (state is AuthStateLogout) {
+          return const LoginView();
+        } else {
+          return const Scaffold(body: CircularProgressIndicator());
         }
       },
     );
